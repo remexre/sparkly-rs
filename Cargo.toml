@@ -1,0 +1,15 @@
+[package]
+authors = ["Nathan Ringo <remexre@gmail.com>"]
+description = "A pretty-printing library based on Wadler's \"A Prettier Printer\" with support for ANSI styling."
+documentation = "https://docs.rs/sparkly"
+homepage = "https://github.com/remexre/sparkly-rs"
+license = "Apache-2.0/MIT"
+name = "sparkly"
+readme = "README.md"
+repository = "https://github.com/remexre/sparkly-rs"
+version = "0.1.0"
+
+[dependencies]
+ansi_term = "0.10.2"
+
+termion = { version = "1.5.1", optional = true }
