@@ -1,11 +1,16 @@
 use std::iter::FromIterator;
 
-use Doc;
+use {Doc, Style};
 
 impl Doc {
     /// Appends one `Doc` to another. Equivalent to the `Append` constructor.
     pub fn append(self, right: Doc) -> Doc {
         Doc::Append(Box::new(self), Box::new(right))
+    }
+
+    /// Applies a style to a `Doc`.
+    pub fn style(self, style: Style) -> Doc {
+        Doc::Style(style, Box::new(self))
     }
 }
 

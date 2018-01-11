@@ -11,29 +11,41 @@ mod render;
 #[cfg(test)]
 mod tests;
 
+pub use ansi_term::{Colour, Style};
+
 pub use render::Display;
 
 /// The type of pretty-printed text.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Doc {
-    /// A Doc which contains no text.
-    Nil,
-
-    /// A string, which must not contain `"\n"`.
+    /// An alternation between two possible ways to format the same content.
     ///
-    /// The `From<&str>` impl for `Doc` does handle newlines properly.
-    Text(String),
-
-    /// A newline.
-    Line,
+    /// The two `Doc`s must flatten to the same `Doc`.
+    /// No first line of the left `Doc` may be shorter than any first line of
+    /// the right `Doc`.
+    Alt(Box<Doc>, Box<Doc>),
 
     /// A concatenation of two documents, without inserting a break between
     /// them.
     Append(Box<Doc>, Box<Doc>),
 
+    /// A newline.
+    Line,
+
     /// Changes the indentation *by* (not to) the given amount, measured in
     /// spaces. Indentation is inserted _after_ a newline.
     Nest(isize, Box<Doc>),
+
+    /// A Doc which contains no text.
+    Nil,
+
+    /// Applies a style to the `Doc`.
+    Style(Style, Box<Doc>),
+
+    /// A string, which must not contain `"\n"`.
+    ///
+    /// The `From<&str>` impl for `Doc` does handle newlines properly.
+    Text(String),
 }
 
 /// A trait for values that are pretty-printable.

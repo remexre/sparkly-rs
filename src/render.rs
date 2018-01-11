@@ -58,6 +58,7 @@ impl<'doc> Display<'doc> {
             Doc::Nil => Ok(()),
             Doc::Text(ref s) => fmt.write_str(s),
             Doc::Line => fmt.write_str("\n"),
+            Doc::Alt(ref l, _) => self.fmt_doc(l, fmt), // TODO
             Doc::Append(ref l, ref r) => {
                 self.fmt_doc(l, fmt)?;
                 self.fmt_doc(r, fmt)
@@ -71,12 +72,17 @@ impl<'doc> Display<'doc> {
                     Ok(())
                 }
                 Doc::Append(ref l, ref r) => {
-                    // TODO This is _awful_.
+                    // TODO This is _awful_ for performance.
                     self.fmt_doc(&Doc::Nest(n, l.clone()), fmt)?;
                     self.fmt_doc(&Doc::Nest(n, r.clone()), fmt)
                 }
                 ref doc => self.fmt_doc(doc, fmt),
             },
+            Doc::Style(style, ref doc) => {
+                write!(fmt, "{}", style.prefix())?;
+                self.fmt_doc(doc, fmt)?;
+                write!(fmt, "{}", style.suffix())
+            }
         }
     }
 }
