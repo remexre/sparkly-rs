@@ -1,5 +1,3 @@
-use itertools::Itertools;
-
 use {Doc, Sparkly};
 
 #[derive(Clone, Debug)]
@@ -24,11 +22,7 @@ impl Sparkly for SExpr {
     fn to_doc(&self) -> Doc {
         match *self {
             SExpr::Atom(ref s) => s.to_string().into(),
-            SExpr::List(ref l) => l.iter()
-                .map(SExpr::to_doc)
-                .fold1(Doc::space)
-                .unwrap_or_else(Doc::empty)
-                .bracket("(", ")"),
+            SExpr::List(ref l) => Doc::lines(l.iter().map(SExpr::to_doc)).bracket("(", ")"),
         }
     }
 }

@@ -1,7 +1,34 @@
 use std::iter::FromIterator;
 
-use {Doc, DocInner, Style};
+use ansi_term::Style;
+use itertools::Itertools;
 
+use {Doc, DocInner, Sparkly};
+
+// The basic constructors, i.e. functions that don't take self and return Doc.
+impl Doc {
+    /// Returns an empty `Doc`.
+    pub fn empty() -> Doc {
+        Doc::from(DocInner::Text("".into()))
+    }
+
+    /// Expands to a newline, which will never be shortened.
+    pub fn line() -> Doc {
+        Doc::from(DocInner::Line(None))
+    }
+
+    /// Expands to the given string, if it will fit, or a newline if it won't.
+    pub fn line_or(s: &'static str) -> Doc {
+        Doc::from(DocInner::Line(Some(s)))
+    }
+
+    /// Concatenates `Doc`s, putting newlines between them.
+    pub fn lines<I: IntoIterator<Item = T>, T: Sparkly>(iter: I) -> Doc {
+        Doc::from(DocInner::Line(None)).join(iter)
+    }
+}
+
+// Constructing combinators, i.e. functions that take self and return Doc.
 impl Doc {
     /// Appends one `Doc` to another. Equivalent to the `Append` constructor.
     pub fn append(self, right: Doc) -> Doc {
@@ -20,11 +47,6 @@ impl Doc {
             .group()
     }
 
-    /// Returns an empty `Doc`.
-    pub fn empty() -> Doc {
-        Doc::from(DocInner::Text("".into()))
-    }
-
     /// Groups the contents of a `Doc`.
     pub fn group(self) -> Doc {
         let inner = self.inner;
@@ -34,8 +56,16 @@ impl Doc {
         ))
     }
 
+    /// Joins `Doc`s, placing the `self` `Doc` between them.
+    pub fn join<I: IntoIterator<Item = T>, T: Sparkly>(self, iter: I) -> Doc {
+        iter.into_iter()
+            .map(|t| t.to_doc())
+            .fold1(|l, r| l.append(self.clone()).append(r))
+            .unwrap_or_else(Doc::empty)
+    }
+
     /// Concatenates two `Doc`s, putting a newline between them.
-    pub fn line(self, right: Doc) -> Doc {
+    pub fn with_line(self, right: Doc) -> Doc {
         self.append(Doc::from(DocInner::Line(None))).append(right)
     }
 
@@ -113,7 +143,7 @@ impl From<&'static str> for Doc {
     }
 }
 
-// TODO: From<AsRef<str>> once specialization lands
+// TODO: From<AsRef<str>> once specialization is stable
 impl From<String> for Doc {
     fn from(s: String) -> Doc {
         let inner = if s.contains('\n') {

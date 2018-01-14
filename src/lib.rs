@@ -2,8 +2,6 @@
 #![warn(missing_docs)]
 
 extern crate ansi_term;
-
-#[cfg(test)]
 extern crate itertools;
 
 #[cfg(feature = "termion")]
@@ -66,8 +64,15 @@ enum DocInner {
 }
 
 /// A trait for values that are pretty-printable.
-trait Sparkly {
+pub trait Sparkly {
+    /// Returns a `Doc` corresponding to the value.
     fn to_doc(&self) -> Doc;
+
+    // TODO: Once specialization is stable, make a method that (using termion)
+    // detects the width and color support of the Write.
+    //
+    //   default fn write_to<W: Write>(&self) -> IoResult<()>
+    //   fn write_to<W: AsRawFd + Write>(&self) -> IoResult<()>
 }
 
 impl Sparkly for Doc {
@@ -76,8 +81,8 @@ impl Sparkly for Doc {
     }
 }
 
-impl<T: AsRef<Sparkly>> Sparkly for T {
+impl<'a, T: Sparkly> Sparkly for &'a T {
     fn to_doc(&self) -> Doc {
-        self.as_ref().to_doc()
+        (*self).to_doc()
     }
 }
