@@ -11,8 +11,27 @@ use termion::{get_tty, is_tty, terminal_size};
 use {Doc, DocInner};
 
 impl Doc {
-    /// Returns an object that implements `Display` for the given settings.
-    pub fn display(&self, width: usize, color: bool) -> Display {
+    /// Returns an object that implements `Display` for the current size of the
+    /// terminal, or 80 columns wide if it cannot be detected. Color is enabled
+    /// if `stdout` is a TTY.
+    ///
+    /// Terminal width detection requires the `termion` feature.
+    pub fn display(&self) -> Display {
+        #[cfg(feature = "termion")]
+        let width = terminal_size().map(|(w, _)| w).unwrap_or(80);
+        #[cfg(not(feature = "termion"))]
+        let width = 80;
+
+        #[cfg(feature = "termion")]
+        let color = is_tty(&stdout());
+        #[cfg(not(feature = "termion"))]
+        let color = false;
+
+        self.display_opts(width as usize, color)
+    }
+
+    /// Returns an object that implements `Display` for the given options.
+    pub fn display_opts(&self, width: usize, color: bool) -> Display {
         Display {
             color,
             doc: &self.inner,
@@ -25,7 +44,7 @@ impl Doc {
     /// terminal. Color support is assumed if `stdout` is a TTY.
     pub fn display_term(&self) -> IoResult<Display> {
         let (width, _) = terminal_size()?;
-        Ok(self.display(width as usize, is_tty(&stdout())))
+        Ok(self.display_opts(width as usize, is_tty(&stdout())))
     }
 
     #[cfg(feature = "termion")]
@@ -33,7 +52,7 @@ impl Doc {
     /// Color support is assumed if the `Write` is a TTY.
     pub fn write_to<W: AsRawFd + Write>(&self, mut w: W) -> IoResult<()> {
         let (width, _) = terminal_size()?;
-        let disp = self.display(width as usize, is_tty(&w));
+        let disp = self.display_opts(width as usize, is_tty(&w));
         write!(w, "{}", disp)
     }
 

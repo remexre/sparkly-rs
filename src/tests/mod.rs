@@ -3,7 +3,7 @@ use {Doc, DocInner, Sparkly};
 macro_rules! tests {
     ($([$name:ident, $n:expr, $c:expr] $l:expr => $r:expr),*) => {
         $(#[test] fn $name() {
-            let l = format!("{}", $l.to_doc().display($n, $c));
+            let l = format!("{}", $l.to_doc().display_opts($n, $c));
             assert_eq!(&l, $r)
         })*
     };
