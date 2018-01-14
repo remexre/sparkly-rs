@@ -13,7 +13,9 @@ doc:
 test: test-debug test-release
 test-debug:
 	cargo test --all
+	cargo test --all --features termion
 test-release:
 	cargo test --all --release
+	cargo test --all --release --features termion
 watch TARGET="all":
-	watchexec -cre pest,rs,toml "just {{TARGET}}"
+	watchexec -cre rs,toml "just {{TARGET}}"

@@ -1,4 +1,4 @@
-use std::iter::once;
+use itertools::Itertools;
 
 use {Doc, Pretty};
 
@@ -23,18 +23,35 @@ impl From<Vec<SExpr>> for SExpr {
 impl Pretty for SExpr {
     fn as_pretty(&self) -> Doc {
         match *self {
-            SExpr::Atom(ref s) => s.into(),
-            SExpr::List(ref l) => once(Doc::from("("))
-                .chain(l.iter().map(SExpr::as_pretty))
-                .chain(once(Doc::from(")")))
-                .collect(),
+            SExpr::Atom(ref s) => s.to_string().into(),
+            SExpr::List(ref l) => l.iter()
+                .map(SExpr::as_pretty)
+                .fold1(Doc::space)
+                .unwrap_or_else(Doc::empty)
+                .bracket("(", ")"),
         }
     }
 }
 
-#[test]
-fn atom() {
-    assert_pretty_eq! {
-        [80, false] SExpr::from("foo") => "foo"
-    }
+tests! {
+    [atom, 80, false] SExpr::from("foo") => "foo",
+    [empty, 80, false] SExpr::from(vec![]) => "()",
+    [not_wrapping, 80, false]
+        SExpr::from(vec![
+            SExpr::from("foo"),
+            SExpr::from("bar"),
+            SExpr::from("baz"),
+            SExpr::from("quux"),
+            SExpr::from("spam"),
+            SExpr::from("eggs"),
+        ]) => "(foo bar baz quux spam eggs)",
+    [wrapping, 10, false]
+        SExpr::from(vec![
+            SExpr::from("foo"),
+            SExpr::from("bar"),
+            SExpr::from("baz"),
+            SExpr::from("quux"),
+            SExpr::from("spam"),
+            SExpr::from("eggs"),
+        ]) => "(\n    foo\n    bar\n    baz\n    quux\n    spam\n    eggs\n)"
 }

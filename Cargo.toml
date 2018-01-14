@@ -13,3 +13,6 @@ version = "0.1.0"
 ansi_term = "0.10.2"
 
 termion = { version = "1.5.1", optional = true }
+
+[dev-dependencies]
+itertools = "0.7.6"
