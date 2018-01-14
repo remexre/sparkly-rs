@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-use {Doc, Pretty};
+use {Doc, Sparkly};
 
 #[derive(Clone, Debug)]
 enum SExpr {
@@ -20,12 +20,12 @@ impl From<Vec<SExpr>> for SExpr {
     }
 }
 
-impl Pretty for SExpr {
-    fn as_pretty(&self) -> Doc {
+impl Sparkly for SExpr {
+    fn to_doc(&self) -> Doc {
         match *self {
             SExpr::Atom(ref s) => s.to_string().into(),
             SExpr::List(ref l) => l.iter()
-                .map(SExpr::as_pretty)
+                .map(SExpr::to_doc)
                 .fold1(Doc::space)
                 .unwrap_or_else(Doc::empty)
                 .bracket("(", ")"),

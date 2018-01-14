@@ -1,9 +1,9 @@
-use {Doc, DocInner, Pretty};
+use {Doc, DocInner, Sparkly};
 
 macro_rules! tests {
     ($([$name:ident, $n:expr, $c:expr] $l:expr => $r:expr),*) => {
         $(#[test] fn $name() {
-            let l = format!("{}", $l.as_pretty().display($n, $c));
+            let l = format!("{}", $l.to_doc().display($n, $c));
             assert_eq!(&l, $r)
         })*
     };

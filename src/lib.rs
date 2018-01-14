@@ -66,18 +66,18 @@ enum DocInner {
 }
 
 /// A trait for values that are pretty-printable.
-trait Pretty {
-    fn as_pretty(&self) -> Doc;
+trait Sparkly {
+    fn to_doc(&self) -> Doc;
 }
 
-impl Pretty for Doc {
-    fn as_pretty(&self) -> Doc {
+impl Sparkly for Doc {
+    fn to_doc(&self) -> Doc {
         self.clone()
     }
 }
 
-impl<T: AsRef<Pretty>> Pretty for T {
-    fn as_pretty(&self) -> Doc {
-        self.as_ref().as_pretty()
+impl<T: AsRef<Sparkly>> Sparkly for T {
+    fn to_doc(&self) -> Doc {
+        self.as_ref().to_doc()
     }
 }
