@@ -43,6 +43,11 @@ impl Doc {
     pub fn split_point() -> Doc {
         Doc::line_or("")
     }
+
+    /// Constructs a `Doc` containing the given text with the given style.
+    pub fn text<T: ToString>(t: T, sty: Style) -> Doc {
+        Doc::from(t.to_string()).style(sty)
+    }
 }
 
 // Constructing combinators, i.e. functions that take self and return Doc.
