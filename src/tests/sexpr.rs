@@ -22,7 +22,7 @@ impl Sparkly for SExpr {
     fn to_doc(&self) -> Doc {
         match *self {
             SExpr::Atom(ref s) => s.to_string().into(),
-            SExpr::List(ref l) => Doc::lines(l.iter().map(SExpr::to_doc)).bracket("(", ")"),
+            SExpr::List(ref l) => Doc::space().join(l).bracket("(", ")"),
         }
     }
 }

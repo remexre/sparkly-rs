@@ -26,11 +26,28 @@ impl Doc {
     pub fn lines<I: IntoIterator<Item = T>, T: Sparkly>(iter: I) -> Doc {
         Doc::from(DocInner::Line(None)).join(iter)
     }
+
+    /// Returns a `Doc` that always expands to a space.
+    pub fn nbsp() -> Doc {
+        Doc::from(" ")
+    }
+
+    /// Returns a `Doc` that expands to a space if it will fit, or a newline
+    /// if it won't.
+    pub fn space() -> Doc {
+        Doc::line_or(" ")
+    }
+
+    /// Returns a `Doc` that represents a point where a line may be split if
+    /// needed.
+    pub fn split_point() -> Doc {
+        Doc::line_or("")
+    }
 }
 
 // Constructing combinators, i.e. functions that take self and return Doc.
 impl Doc {
-    /// Appends one `Doc` to another. Equivalent to the `Append` constructor.
+    /// Appends one `Doc` to another.
     pub fn append(self, right: Doc) -> Doc {
         Doc::from(DocInner::Append(
             Box::new(self.inner),
@@ -41,9 +58,11 @@ impl Doc {
     /// Brackets a `Doc` between two constant strings.
     pub fn bracket(self, l: &'static str, r: &'static str) -> Doc {
         Doc::from(l)
-            .maybe_split(self)
+            .append(Doc::split_point())
+            .append(self)
             .nest(4)
-            .maybe_split(Doc::from(r))
+            .append(Doc::split_point())
+            .append(Doc::from(r))
             .group()
     }
 
@@ -64,35 +83,9 @@ impl Doc {
             .unwrap_or_else(Doc::empty)
     }
 
-    /// Concatenates two `Doc`s, putting a newline between them.
-    pub fn with_line(self, right: Doc) -> Doc {
-        self.append(Doc::from(DocInner::Line(None))).append(right)
-    }
-
-    /// Concatenates two `Doc`s. If the line would overflow, a newline is
-    /// inserted between them.
-    pub fn maybe_split(self, right: Doc) -> Doc {
-        self.append(Doc::from(DocInner::Line(Some(""))))
-            .append(right)
-    }
-
-    /// Concatenates two `Doc`s, putting a space between them that will never
-    /// be split to a newline.
-    pub fn nbsp(self, right: Doc) -> Doc {
-        self.append(Doc::from(DocInner::Text(" ".into())))
-            .append(right)
-    }
-
     /// Nests the `Doc` with the given amount of indentation.
     pub fn nest(self, n: usize) -> Doc {
         Doc::from(DocInner::Nest(n, Box::new(self.inner)))
-    }
-
-    /// Concatenates two `Doc`s, putting a space between them if it will fit,
-    /// and a newline if it will not.
-    pub fn space(self, right: Doc) -> Doc {
-        self.append(Doc::from(DocInner::Line(Some(" "))))
-            .append(right)
     }
 
     /// Applies a style to a `Doc`.
