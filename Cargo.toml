@@ -7,7 +7,7 @@ license = "Apache-2.0/MIT"
 name = "sparkly"
 readme = "README.md"
 repository = "https://github.com/remexre/sparkly-rs"
-version = "0.1.0"
+version = "0.1.1"
 
 [dependencies]
 ansi_term = "0.10.2"

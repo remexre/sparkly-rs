@@ -39,26 +39,43 @@ impl Doc {
         }
     }
 
-    #[cfg(feature = "termion")]
     /// Returns an object that implements `Display` for the current size of the
     /// terminal. Color support is assumed if `stdout` is a TTY.
+    #[cfg(feature = "termion")]
     pub fn display_term(&self) -> IoResult<Display> {
         let (width, _) = terminal_size()?;
         Ok(self.display_opts(width as usize, is_tty(&stdout())))
     }
 
-    #[cfg(feature = "termion")]
     /// Writes the `Doc` to a `Write` for the current size of the terminal.
     /// Color support is assumed if the `Write` is a TTY.
+    #[cfg(feature = "termion")]
     pub fn write_to<W: AsRawFd + Write>(&self, mut w: W) -> IoResult<()> {
         let (width, _) = terminal_size()?;
         let disp = self.display_opts(width as usize, is_tty(&w));
         write!(w, "{}", disp)
     }
 
+    /// Writes the `Doc` to a `Write` for the current size of the terminal,
+    /// followed by a newline. Color support is assumed if the `Write` is a
+    /// TTY.
     #[cfg(feature = "termion")]
+    pub fn writeln_to<W: AsRawFd + Write>(&self, mut w: W) -> IoResult<()> {
+        let (width, _) = terminal_size()?;
+        let disp = self.display_opts(width as usize, is_tty(&w));
+        write!(w, "{}", disp)
+    }
+
     /// Writes the `Doc` to the terminal. Color support is assumed.
+    #[cfg(feature = "termion")]
     pub fn write_to_tty(&self) -> IoResult<()> {
+        let tty = get_tty()?;
+        self.write_to(tty)
+    }
+
+    /// Writes the `Doc` to the terminal, followed by a newline.
+    #[cfg(feature = "termion")]
+    pub fn writeln_to_tty(&self) -> IoResult<()> {
         let tty = get_tty()?;
         self.write_to(tty)
     }
@@ -95,7 +112,6 @@ impl<'doc> DisplayTrait for Display<'doc> {
     }
 }
 
-#[derive(Debug)]
 enum RenderDoc<'doc> {
     Line(usize),
     Text(&'doc str, Style),
