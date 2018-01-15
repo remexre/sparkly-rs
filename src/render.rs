@@ -63,7 +63,7 @@ impl Doc {
     pub fn writeln_to<W: AsRawFd + Write>(&self, mut w: W) -> IoResult<()> {
         let (width, _) = terminal_size()?;
         let disp = self.display_opts(width as usize, is_tty(&w));
-        write!(w, "{}", disp)
+        writeln!(w, "{}", disp)
     }
 
     /// Writes the `Doc` to the terminal. Color support is assumed.
@@ -77,7 +77,7 @@ impl Doc {
     #[cfg(feature = "termion")]
     pub fn writeln_to_tty(&self) -> IoResult<()> {
         let tty = get_tty()?;
-        self.write_to(tty)
+        self.writeln_to(tty)
     }
 }
 
