@@ -99,13 +99,11 @@ impl<'doc> DisplayTrait for Display<'doc> {
                         fmt.write_str(" ")?;
                     }
                 }
-                RenderDoc::Text(s, sty) => {
-                    if self.color {
-                        write!(fmt, "{}", sty.paint(s))?;
-                    } else {
-                        fmt.write_str(s)?;
-                    }
-                }
+                RenderDoc::Text(s, sty) => if self.color {
+                    write!(fmt, "{}", sty.paint(s))?;
+                } else {
+                    fmt.write_str(s)?;
+                },
             }
         }
         Ok(())

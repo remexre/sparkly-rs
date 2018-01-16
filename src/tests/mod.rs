@@ -9,6 +9,7 @@ macro_rules! tests {
     };
 }
 
+mod impl_bounds;
 mod sexpr;
 
 tests! {

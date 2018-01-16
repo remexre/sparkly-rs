@@ -7,10 +7,13 @@ license = "Apache-2.0/MIT"
 name = "sparkly"
 readme = "README.md"
 repository = "https://github.com/remexre/sparkly-rs"
-version = "0.1.3"
+version = "0.1.4"
 
 [dependencies]
 ansi_term = "0.10.2"
 itertools = "0.7.6"
 
 termion = { version = "1.5.1", optional = true }
+
+[dev-dependencies]
+proptest = "0.4.0"

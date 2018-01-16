@@ -7,6 +7,13 @@ extern crate itertools;
 #[cfg(feature = "termion")]
 extern crate termion;
 
+#[cfg(test)]
+#[macro_use]
+extern crate proptest;
+
+#[macro_use]
+mod macros;
+
 mod ctors;
 mod render;
 #[cfg(test)]
