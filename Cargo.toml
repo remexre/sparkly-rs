@@ -10,10 +10,10 @@ repository = "https://github.com/remexre/sparkly-rs"
 version = "0.1.4"
 
 [dependencies]
-ansi_term = "0.10.2"
+ansi_term = "0.11.0"
 itertools = "0.7.6"
 
 termion = { version = "1.5.1", optional = true }
 
 [dev-dependencies]
-proptest = "0.4.0"
+proptest = "0.7.0"
