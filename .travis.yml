@@ -3,10 +3,12 @@ rust:
   - stable
   - beta
   - nightly
+matrix:
+  allow_failures:
+  - rust: nightly
+  fast_finish: true
 os:
   - linux
   - osx
-install:
-  - cargo install just
-script:
-  - just travis-ci
+cache: cargo
+script: python3 .travis/run.py

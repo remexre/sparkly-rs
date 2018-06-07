@@ -1,3 +1,18 @@
+/// Creates a Display impl based on the Sparkly impl for the type.
+///
+/// The impl will assume a width of 80 characters.
+///
+/// Generic bounds are supported with the following syntax:
+///
+/// ```rust
+/// # #[macro_use]
+/// # extern crate sparkly;
+/// # use std::fmt::Display;
+/// # use std::marker::PhantomData;
+/// # struct Type<T, U>(PhantomData<fn(T) -> U>);
+/// impl_Display_for_Sparkly!((T, U: Display) Type<T, U>);
+/// # fn main() {}
+/// ```
 #[macro_export]
 macro_rules! impl_Display_for_Sparkly {
     (($($bound:tt)*) $ty:ty) => {

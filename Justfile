@@ -1,4 +1,6 @@
 all: check doc build test
+bench:
+	cargo bench --all
 build: build-debug build-release
 build-debug:
 	cargo build --all
@@ -19,5 +21,3 @@ test-release:
 	cargo test --all --release --features termion
 watch TARGET="all":
 	watchexec -cre rs,toml "just {{TARGET}}"
-
-travis-ci: doc build test
