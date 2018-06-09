@@ -11,4 +11,4 @@ os:
   - linux
   - osx
 cache: cargo
-script: python3 .travis/run.py
+script: ./.travis/run.py
