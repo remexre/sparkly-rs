@@ -1,6 +1,6 @@
 all: check doc build test
 bench:
-	cargo bench --all
+	cargo +nightly bench --all
 build: build-debug build-release
 build-debug:
 	cargo build --all
@@ -10,6 +10,8 @@ check:
 	cargo check --all
 clean:
 	cargo clean
+clippy:
+	cargo +nightly clippy --all
 doc:
 	cargo doc --all
 test: test-debug test-release
