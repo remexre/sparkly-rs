@@ -5,6 +5,8 @@
 [![Documentation](https://docs.rs/sparkly/badge.svg)](https://docs.rs/sparkly/*/sparkly/)
 ![License](https://img.shields.io/crates/l/sparkly.svg)
 
+Currently, the performance is really bad; [pretty.rs](https://crates.io/crates/pretty) may be preferred.
+
 A pretty-printing library based on Wadler's "A Prettier Printer" with support for ANSI styling.
 
 I'm using this to walk myself through the paper and understand it well enough to implement; plus it doesn't look like there's an existing implementation of this.
